@@ -9,7 +9,8 @@ on:
       - master
   workflow_dispatch:
 jobs:
-  scan:
+  ics-scan-and-upload:
+    name: insightCloudSec repository scan with Github Advanced Security
     runs-on: ubuntu-latest
 
     steps:
@@ -21,10 +22,18 @@ jobs:
         with:
           api_key: ${{ secrets.ICS_API_KEY }}
           ics_base_url: ${{ secrets.ICS_BASE_URL }}
+          config_name: AWS CIS Benchmark 1.4
           # directory: ./src   # <-- opcjonalnie: folder do skanowania
           # fail_on_severity: high   # <-- opcjonalnie: zatrzymuj workflow na high vulnerabilities
           # ics_base_url: https://twoj-serwer.example.com   # <-- opcjonalnie: jeśli masz on-prem
-
+      - name: Attach scan artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: mimics-scan-artifacts
+          path: |
+            ./log/mimics*.log
+            ./ics_scan.
       - name: Upload Scan Results (Optional)
         if: always()
         uses: actions/upload-artifact@v4
