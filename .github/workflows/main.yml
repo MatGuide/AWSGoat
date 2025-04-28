@@ -19,7 +19,7 @@ jobs:
         with:
           api_key: ${{ secrets.ics_api_key }}
           base_url: ${{ secrets.ics_base_url }}
-          config_name: AWS CIS 1.4.0
+          config_name: AWSGoat Repository
 
       # the following is optional but recommended to retrieve scan reports and logs
       - name: Attach scan artifacts
