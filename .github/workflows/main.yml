@@ -1,5 +1,5 @@
 name: InsightCloudSec Scan
-
+uses: rapid7/insightcloudsec-actions@v2.0.1
 on:
   push:
     branches:
