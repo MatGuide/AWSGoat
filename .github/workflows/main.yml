@@ -19,7 +19,7 @@ jobs:
         with:
           api_key: ${{ secrets.ics_api_key }}
           base_url: ${{ secrets.ics_base_url }}
-          config_name: CIS - AWS 2.0.0
+          config_name: AWS CIS Benchmark 1.4.0
       # the following is optional but recommended to retrieve scan reports and logs
       - name: Attach scan artifacts
         if: always()
