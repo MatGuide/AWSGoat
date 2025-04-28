@@ -19,7 +19,8 @@ jobs:
       - name: Run InsightCloudSec Scan
         uses: rapid7/insightcloudsec-actions@v2.0.1
         with:
-          api_key: ${{ secrets.INSIGHTCLOUDSEC_API_KEY }}
+          api_key: ${{ secrets.ICS_API_KEY }}
+          ics_base_url: ${{ secrets.ICS_BASE_URL }}
           # directory: ./src   # <-- opcjonalnie: folder do skanowania
           # fail_on_severity: high   # <-- opcjonalnie: zatrzymuj workflow na high vulnerabilities
           # ics_base_url: https://twoj-serwer.example.com   # <-- opcjonalnie: jeśli masz on-prem
