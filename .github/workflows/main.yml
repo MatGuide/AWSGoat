@@ -26,14 +26,6 @@ jobs:
           # directory: ./src   # <-- opcjonalnie: folder do skanowania
           # fail_on_severity: high   # <-- opcjonalnie: zatrzymuj workflow na high vulnerabilities
           # ics_base_url: https://twoj-serwer.example.com   # <-- opcjonalnie: jeśli masz on-prem
-      - name: Attach scan artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: mimics-scan-artifacts
-          path: |
-            ./log/mimics*.log
-            ./ics_scan.
       - name: Upload Scan Results (Optional)
         if: always()
         uses: actions/upload-artifact@v4
