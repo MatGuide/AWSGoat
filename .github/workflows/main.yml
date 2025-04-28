@@ -18,6 +18,7 @@ jobs:
         uses: rapid7/insightcloudsec-actions@v2.0.1
         with:
           api_key: ${{ secrets.ics_api_key }}
+          base_url: ${{ secrets.ics_base_url }}
           config_name: AWSGoat Repository
 
       # the following is optional but recommended to retrieve scan reports and logs
