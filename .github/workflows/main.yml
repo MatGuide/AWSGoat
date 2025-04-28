@@ -1,22 +1,32 @@
 name: InsightCloudSec Scan
-uses: rapid7/insightcloudsec-actions@v2.0.1
+
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   scan:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository code
         uses: actions/checkout@v4
 
       - name: Run InsightCloudSec Scan
-        uses: rapid7/insightcloudsec-scan-action@master
+        uses: rapid7/insightcloudsec-actions@v2.0.1
         with:
-          api_key: ${{ secrets.ICS_API_KEY }}
-          ics_base_url: ${{ secrets.ICS_BASE_URL }}
+          api_key: ${{ secrets.INSIGHTCLOUDSEC_API_KEY }}
+          # directory: ./src   # <-- opcjonalnie: folder do skanowania
+          # fail_on_severity: high   # <-- opcjonalnie: zatrzymuj workflow na high vulnerabilities
+          # ics_base_url: https://twoj-serwer.example.com   # <-- opcjonalnie: jeśli masz on-prem
+
+      - name: Upload Scan Results (Optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scan-results
+          path: results/
