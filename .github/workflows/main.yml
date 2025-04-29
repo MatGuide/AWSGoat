@@ -1,4 +1,3 @@
----
 name: "Github Actions ICS Demo"
 
 on:
@@ -12,10 +11,17 @@ jobs:
   terraform-plan-generation:
     name: Terraform Plan Generation 
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
 
       - uses: hashicorp/setup-terraform@v2
         with:
@@ -30,7 +36,7 @@ jobs:
         id: plan
         run: terraform plan -out out.plan
         working-directory: modules/module-1
-        
+
       - name: Show And Save Terraform JSON Output 
         id: show
         run: terraform show -json out.plan > out.plan.json
@@ -60,8 +66,8 @@ jobs:
       - name: Scan the TF plan
         uses: rapid7/insightcloudsec-actions@v2
         with:
-          api_key: ${{ secrets.ics_api_key }}
-          base_url: ${{ secrets.ics_base_url }}
+          api_key: ${{ secrets.ICS_API_KEY }}
+          base_url: ${{ secrets.ICS_BASE_URL }}
           config_name: Demo IaC Configuration
           target: out.plan.json
 
