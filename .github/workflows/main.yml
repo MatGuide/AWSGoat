@@ -24,20 +24,23 @@ jobs:
       - name: Terraform Init
         id: init
         run: terraform init
+        working-directory: modules/module-1
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out out.plan 
+        run: terraform plan -out out.plan
+        working-directory: modules/module-1
         
       - name: Show And Save Terraform JSON Output 
         id: show
         run: terraform show -json out.plan > out.plan.json
+        working-directory: modules/module-1
 
       - name: Save And Archive Json Plan
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan-json
-          path: out.plan.json
+          path: modules/module-1/out.plan.json
   
   ics-scanner:
     name: ICS Terraform Scan
@@ -45,11 +48,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Retrieve the TF Plan Artifact
         uses: actions/download-artifact@v4.1.7
         with:
           name: terraform-plan-json
-          path: out.plan.json
+          path: .
 
       - name: Scan the TF plan
         uses: rapid7/insightcloudsec-actions@v2
@@ -61,9 +67,10 @@ jobs:
 
       - name: Attach scan artifacts
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: ICS-scan-artifacts
           path: |
-            ./log/mimics*.log
-            ./ics_scan.*
+            log/
+            ics_scan.*
