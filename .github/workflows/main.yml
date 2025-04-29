@@ -34,7 +34,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out out.plan 
+        run: terraform plan -var modules/module-1/main.tf -out out.plan 
         
       - name: Show And Save Terraform JSON Output 
         id: show
