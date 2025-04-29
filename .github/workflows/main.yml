@@ -68,7 +68,7 @@ jobs:
         with:
           api_key: ${{ secrets.ICS_API_KEY }}
           base_url: ${{ secrets.ICS_BASE_URL }}
-          config_name: Demo IaC Configuration
+          config_name: AWSGoat Repository
           target: out.plan.json
 
       - name: Attach scan artifacts
