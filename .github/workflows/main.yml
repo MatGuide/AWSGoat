@@ -17,13 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1 
-
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
@@ -34,7 +27,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -var modules/module-1/main.tf -out out.plan 
+        run: terraform plan -out out.plan 
         
       - name: Show And Save Terraform JSON Output 
         id: show
