@@ -1,38 +1,76 @@
-name: InsightCloudSec Scan
+---
+name: "Github Actions ICS Demo"
 
 on:
   push:
     branches:
       - master
   pull_request:
-    branches:
-      - master
   workflow_dispatch:
+
 jobs:
-  ics-scan-and-upload:
-    name: insightCloudSec repository scan with Github Advanced Security
+  terraform-plan-generation:
+    name: Terraform Plan Generation 
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v3
-      - name: Scan the repository
-        uses: rapid7/insightcloudsec-actions@v2.0.1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1 
+
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -out out.plan 
+        
+      - name: Show And Save Terraform JSON Output 
+        id: show
+        run: terraform show -json out.plan > out.plan.json
+
+      - name: Save And Archive Json Plan
+        uses: actions/upload-artifact@v4.1.7
+        with:
+          name: terraform-plan-json
+          path: out.plan.json
+  
+  ics-scanner:
+    name: ICS Terraform Scan
+    needs: terraform-plan-generation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Retrieve the TF Plan Artifact
+        uses: actions/download-artifact@v4.1.7
+        with:
+          name: terraform-plan-json
+          path: out.plan.json
+
+      - name: Scan the TF plan
+        uses: rapid7/insightcloudsec-actions@v2
         with:
           api_key: ${{ secrets.ics_api_key }}
           base_url: ${{ secrets.ics_base_url }}
-          config_name: AWSGoat Repository
+          config_name: Demo IaC Configuration
+          target: out.plan.json
 
-      # the following is optional but recommended to retrieve scan reports and logs
       - name: Attach scan artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.1.7
         with:
-          name: mimics-scan-artifacts
+          name: ICS-scan-artifacts
           path: |
             ./log/mimics*.log
             ./ics_scan.*
-      # the following is optional but recommended to surface results to Github Advanced Security
-      - name: Upload the sarif report to Github Advanced Security
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: ics_scan.sarif
